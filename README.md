@@ -106,6 +106,12 @@ Email: scriptworkstudio@hotmail.com
 
 Free to use for educational, theatrical, and personal use.
 
+## Support the Project
+
+ScriptWriter is completely free — no ads, no subscriptions, no data collection. If it's been useful for your writing, rehearsals, or productions, buying a coffee is a lovely way to show your appreciation and help keep it maintained and improved.
+
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/scriptworkstudio)
+
 ---
 
 *Built by [Script Work Studio](https://buymeacoffee.com/scriptworkstudio) — free tools for education and the arts.*
