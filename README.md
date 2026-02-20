@@ -39,9 +39,29 @@ A dedicated space for cast members to work with their own copy of the script:
 ### 💾 File Management
 - **Save** — saves your project as a `.playwriter.json` file using a native save dialog (choose your own location)
 - **Load** — open any previously saved `.playwriter.json` file
-- **Import** — import from Word (`.docx`), PDF, or existing ScriptWriter files
+- **Import** — import from Word (`.docx`), PDF, HTML pages, or existing ScriptWriter files
 - **New** — start a fresh project (with confirmation so you don't lose work)
 - **Print / PDF** — print or export to PDF directly from your browser
+
+---
+
+## Importing Scripts
+
+ScriptWriter can import scripts from several sources:
+
+**Word (.docx)** — works best. Formatting is preserved well and character names are usually detected automatically.
+
+**HTML pages** — great for importing from websites. Works especially well with [MIT Shakespeare](https://shakespeare.mit.edu), which contains the complete works of Shakespeare, freely available. To import:
+1. Go to [shakespeare.mit.edu](https://shakespeare.mit.edu) and open any play
+2. In your browser, go to **File → Save Page As → Webpage, HTML Only**
+3. Import that `.html` file into ScriptWriter
+4. Acts, scenes, dialogue, and stage directions are all detected automatically
+
+HTML import also works on other script websites, though results may vary depending on how the page is structured. Simply structured pages generally import cleanly; heavily styled modern sites may need some tidying afterwards.
+
+**PDF** — works if the PDF contains selectable text (i.e. you can highlight text in it). PDFs created by printing a webpage or scanning a document are image-based and can't be read. If yours fails, the error message explains a free workaround using Google Drive to convert it to a Word file first.
+
+**Existing ScriptWriter files** — load any previously saved `.playwriter.json` file.
 
 ---
 
@@ -96,6 +116,7 @@ Email: scriptworkstudio@hotmail.com
 - Works fully offline once loaded or downloaded
 - All script data is stored locally in your browser — nothing is sent to a server
 - Word and PDF imports use [Mammoth.js](https://github.com/mwilliamson/mammoth.js) and [PDF.js](https://mozilla.github.io/pdf.js/) — loaded once from a CDN then cached by the browser
+- HTML import uses the browser's built-in `DOMParser` — no external library needed; includes a dedicated parser for [MIT Shakespeare](https://shakespeare.mit.edu) pages
 - Two versions are maintained:
   - `index.html` — the online version (includes the Download App button)
   - `ScriptWriter.html` — the offline version (no download button, clean interface)

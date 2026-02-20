@@ -2146,6 +2146,44 @@
       </div>
     </div>
 
+    <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);text-align:left;">
+      <p style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px;">📥 Importing Scripts</p>
+
+      <div style="margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">Importing Shakespeare plays</p>
+        <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:6px;">
+          <a href="https://shakespeare.mit.edu" target="_blank" rel="noopener" style="color:var(--accent);">shakespeare.mit.edu</a> 
+          has the complete works of Shakespeare, completely free. ScriptWriter can import any play directly:
+        </p>
+        <ol style="font-size:13px;color:#666;line-height:2;margin:0;padding-left:20px;">
+          <li>Open the play at <a href="https://shakespeare.mit.edu" target="_blank" rel="noopener" style="color:var(--accent);">shakespeare.mit.edu</a></li>
+          <li>In your browser: <strong>File → Save Page As → Webpage, HTML Only</strong></li>
+          <li>Click <strong>Import</strong> in ScriptWriter and select the saved file</li>
+        </ol>
+        <p style="font-size:13px;color:#666;line-height:1.7;margin-top:6px;">
+          Acts, scenes, all characters, dialogue and stage directions are detected automatically.
+        </p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">Importing from other websites</p>
+        <p style="font-size:13px;color:#666;line-height:1.7;">
+          HTML import works on other script websites too — use the same Save Page As → Webpage, HTML Only method. 
+          Results vary depending on how the site is built. Cleanly structured pages import well; 
+          heavily styled modern sites may need some tidying in the editor afterwards.
+        </p>
+      </div>
+
+      <div>
+        <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">My PDF won't import</p>
+        <p style="font-size:13px;color:#666;line-height:1.7;">
+          PDFs created by printing a webpage or scanning a document store text as an image, which ScriptWriter can't read. 
+          The free workaround is to use Google Drive: upload the PDF, right-click → <strong>Open with Google Docs</strong>, 
+          and Google will read the text automatically. Then <strong>File → Download → Microsoft Word (.docx)</strong> and import that instead.
+        </p>
+      </div>
+    </div>
+
   </div>
 </div><!-- /tab-coffee -->
 
@@ -2907,7 +2945,15 @@ function azProcessFile(file) {
         pdfjsLib.getDocument({ data: new Uint8Array(e.target.result) }).promise.then(pdf => {
           const pages = [];
           for (let i = 1; i <= pdf.numPages; i++) pages.push(pdf.getPage(i).then(p => p.getTextContent()).then(tc => tc.items.map(x => x.str).join(' ')));
-          Promise.all(pages).then(texts => { azParseText(texts.join('\n'), file.name); azHideProgress(); });
+          Promise.all(pages).then(texts => {
+            azHideProgress();
+            const combined = texts.join('\n').trim();
+            if (!combined) {
+              alert('This PDF doesn\'t contain selectable text \u2014 it\'s likely an image-based PDF.\n\n\ud83d\udca1 Free fix using Google Drive:\n1. Upload the PDF to Google Drive\n2. Right-click it \u2192 Open with Google Docs\n3. Google will read the text automatically\n4. File \u2192 Download \u2192 Microsoft Word (.docx)\n5. Import that .docx file here instead');
+              return;
+            }
+            azParseText(combined, file.name);
+          });
         }).catch(() => { alert('Could not read PDF.'); azHideProgress(); });
       };
       r.readAsArrayBuffer(file);
@@ -3972,7 +4018,7 @@ function importConfirm() {
     });
 
   } else if (name.endsWith('.pdf')) {
-    showProg('Reading PDF…');
+    showProg('Reading PDF\u2026');
     loadLib('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'pdfjsLib', () => {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const r = new FileReader();
@@ -3982,18 +4028,194 @@ function importConfirm() {
             const pages = [];
             for (let i = 1; i <= pdf.numPages; i++)
               pages.push(pdf.getPage(i).then(p => p.getTextContent()).then(tc => tc.items.map(x => x.str).join(' ')));
-            Promise.all(pages).then(texts => { hideProg(); parseTextToBlocks(texts.join('\n'), file.name); });
+            Promise.all(pages).then(texts => {
+              hideProg();
+              const combined = texts.join('\n').trim();
+              if (!combined) {
+                alert('This PDF doesn\'t contain selectable text \u2014 it\'s likely an image-based PDF.\n\n\ud83d\udca1 Free fix using Google Drive:\n1. Upload the PDF to Google Drive\n2. Right-click it \u2192 Open with Google Docs\n3. Google will read the text automatically\n4. File \u2192 Download \u2192 Microsoft Word (.docx)\n5. Import that .docx file here instead\n\nAlternatively, if you have the original webpage, save it as \u201cWebpage, HTML Only\u201d and import the .html file.');
+                return;
+              }
+              parseTextToBlocks(combined, file.name);
+            });
           })
           .catch(() => { hideProg(); alert('Could not read PDF file.'); });
       };
       r.readAsArrayBuffer(file);
     });
+
+  } else if (name.endsWith('.html') || name.endsWith('.htm')) {
+    showProg('Reading HTML file\u2026');
+    const r = new FileReader();
+    r.onload = e => {
+      hideProg();
+      const result = parseHtmlToBlocks(e.target.result, file.name);
+      if (!result.blocks.length) {
+        alert('Could not find any script content in this HTML file.\n\nMake sure you saved the page as \u201cWebpage, HTML Only\u201d from your browser.');
+        return;
+      }
+      const cast = [...new Set(result.blocks.filter(b => b.type === 'dialogue' && b.charName).map(b => b.charName))].sort();
+      ingestParsed({ playTitle: result.title, playAuthor: result.author, cast, blocks: result.blocks });
+    };
+    r.readAsText(file);
+
   } else {
-    alert('Please choose a .json, .docx, or .pdf file.');
+    alert('Please choose a .json, .docx, .pdf, or .html file.');
   }
 }
 
-// ── MISSING STUBS (theatre editor scene slug — not yet implemented) ──
+// \u2500\u2500 HTML IMPORT PARSER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+function parseHtmlToBlocks(htmlString, fileName) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  const isMit = htmlString.includes('shakespeare.mit.edu') ||
+                htmlString.includes('Complete Moby') ||
+                /name="speech\d+"/i.test(htmlString) ||
+                /name=speech\d+/i.test(htmlString);
+  return isMit ? parseMitShakespeareHtml(doc) : parseGenericPlayHtml(doc, fileName);
+}
+
+function parseMitShakespeareHtml(doc) {
+  const blocks = [];
+  let title = (doc.title || '').replace(/:\s*(Entire Play|Full Play|Full Text).*/i, '').trim();
+  const body = doc.body;
+  if (!body) return { blocks, title, author: 'William Shakespeare' };
+
+  let currentChar = null;
+  let currentLines = [];
+
+  function flushSpeech() {
+    if (currentChar && currentLines.length) {
+      blocks.push({ type: 'dialogue', charName: currentChar, content: currentLines.join(' ') });
+    }
+    currentChar = null;
+    currentLines = [];
+  }
+
+  function extractLineAnchors(container) {
+    for (const child of container.childNodes) {
+      if (child.nodeType !== Node.ELEMENT_NODE) continue;
+      const tag = child.tagName.toLowerCase();
+      if (tag === 'a') {
+        const n = child.getAttribute('name') || '';
+        if (/^\d+\.\d+\.\d+$/.test(n)) {
+          const text = child.textContent.trim();
+          if (text) currentLines.push(text);
+        }
+      } else if (tag === 'p' || tag === 'i' || tag === 'em') {
+        const italic = tag === 'p' ? child.querySelector('i, em') : child;
+        if (italic) {
+          const text = italic.textContent.trim();
+          if (text) {
+            const savedChar = currentChar;
+            if (currentLines.length) blocks.push({ type: 'dialogue', charName: savedChar || '', content: currentLines.join(' ') });
+            currentLines = [];
+            blocks.push({ type: 'stage', charName: '', content: text });
+            currentChar = savedChar;
+          }
+        }
+      }
+    }
+  }
+
+  function walkNode(node) {
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName.toLowerCase();
+    if (tag === 'h3') {
+      flushSpeech();
+      const text = node.textContent.trim();
+      blocks.push({ type: /^act\s/i.test(text) ? 'act' : 'scene', charName: '', content: text });
+      return;
+    }
+    if (tag === 'a') {
+      const n = node.getAttribute('name') || '';
+      if (/^speech\d+$/i.test(n)) {
+        flushSpeech();
+        const bold = node.querySelector('b, strong');
+        if (bold) currentChar = bold.textContent.trim();
+        return;
+      }
+    }
+    if (tag === 'blockquote') {
+      const hasLines = [...node.querySelectorAll('a[name]')].some(a => /^\d+\.\d+\.\d+$/.test(a.getAttribute('name') || ''));
+      if (hasLines) {
+        extractLineAnchors(node);
+      } else {
+        const italic = node.querySelector('i, em');
+        if (italic) { flushSpeech(); blocks.push({ type: 'stage', charName: '', content: italic.textContent.trim() }); }
+      }
+      return;
+    }
+    if (tag === 'p') {
+      const italic = node.querySelector('i, em');
+      if (italic && !node.querySelector('a[name]')) {
+        flushSpeech();
+        const text = italic.textContent.trim();
+        if (text) blocks.push({ type: 'stage', charName: '', content: text });
+        return;
+      }
+    }
+    for (const child of node.childNodes) walkNode(child);
+  }
+
+  for (const child of body.childNodes) walkNode(child);
+  flushSpeech();
+  return { blocks, title: title || 'Shakespeare Play', author: 'William Shakespeare' };
+}
+
+function parseGenericPlayHtml(doc, fileName) {
+  const blocks = [];
+  const title = (doc.querySelector('h1')?.textContent || doc.title || fileName).replace(/\.html?$/i, '').trim();
+
+  function walk(node, ctx) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      node.textContent.split('\n').forEach(l => { const t = l.trim(); if (t) ctx.push({ text: t, italic: false, bold: false }); });
+      return;
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const tag = node.tagName.toLowerCase();
+    if (['script', 'style', 'nav', 'header', 'footer'].includes(tag)) return;
+    const isI = tag === 'i' || tag === 'em', isB = tag === 'b' || tag === 'strong';
+    const isH = /^h[1-6]$/.test(tag);
+    const isBlock = ['p', 'div', 'br', 'li', 'blockquote', 'section', 'article'].includes(tag);
+    if (isH) { const t = node.textContent.trim(); if (t) ctx.push({ text: t, heading: true }); return; }
+    if (tag === 'br') { ctx.push({ text: '', br: true }); return; }
+    const sub = [];
+    for (const c of node.childNodes) walk(c, sub);
+    sub.forEach(item => { if (isI) item.italic = true; if (isB) item.bold = true; ctx.push(item); });
+    if (isBlock) ctx.push({ text: '', br: true });
+  }
+
+  const lines = [];
+  walk(doc.body || doc.documentElement, lines);
+  const CHAR_RE = t => /^[A-Z][A-Z0-9\s\.\-']{1,28}$/.test(t) && t.length >= 2;
+  let charBuf = null, speechBuf = [];
+
+  function flushSpeech() {
+    const t = speechBuf.join(' ').trim();
+    if (t) blocks.push({ type: 'dialogue', charName: charBuf || '', content: t });
+    speechBuf = []; charBuf = null;
+  }
+
+  for (const ln of lines) {
+    const t = ln.text?.trim();
+    if (!t) continue;
+    if (ln.heading) {
+      flushSpeech();
+      if (/^act\s/i.test(t) || /^act [ivxlcdm]/i.test(t)) blocks.push({ type: 'act', charName: '', content: t });
+      else if (/^scene\s/i.test(t)) blocks.push({ type: 'scene', charName: '', content: t });
+      else blocks.push({ type: 'act', charName: '', content: t });
+      continue;
+    }
+    if (ln.italic && /^(enter|exit|exeunt|\[)/i.test(t)) { flushSpeech(); blocks.push({ type: 'stage', charName: '', content: t }); continue; }
+    if (CHAR_RE(t)) { flushSpeech(); charBuf = t; continue; }
+    speechBuf.push(t);
+  }
+  flushSpeech();
+  return { blocks, title, author: '' };
+}
+
+// \u2500\u2500 MISSING STUBS (theatre editor scene slug \u2014 not yet implemented) \u2500\u2500
 function restoreLayoutPref() {
   const saved = localStorage.getItem('pw_layout') || 'modern';
   applyLayout(saved);
@@ -4242,7 +4464,7 @@ function downloadApp() {
 <div id="import-modal-overlay" onclick="if(event.target===this)closeImportModal()">
   <div id="import-modal">
     <h3>Import Existing Script</h3>
-    <p class="import-sub">Import a Word document, PDF, or existing ScriptWriter file to continue working on it here.</p>
+    <p class="import-sub">Import a Word document, PDF, HTML script (including MIT Shakespeare pages), or existing ScriptWriter file.</p>
 
     <div id="import-drop-zone"
          onclick="document.getElementById('import-file-input').click()"
@@ -4253,11 +4475,12 @@ function downloadApp() {
       <strong>Choose file or drag &amp; drop</strong>
       <p>Click to browse your files</p>
     </div>
-    <p id="import-file-types">.playwriter.json &nbsp;·&nbsp; .docx Word document &nbsp;·&nbsp; .pdf</p>
+    <p id="import-file-types">.playwriter.json &nbsp;·&nbsp; .docx Word document &nbsp;·&nbsp; .pdf &nbsp;·&nbsp; .html</p>
 
     <div class="import-warning">
       <strong>📄 Word (.docx)</strong> imports work best — formatting is preserved well.<br>
-      <strong>📋 PDF</strong> imports also work but may need some tidying afterwards, as PDFs don't always preserve text structure cleanly.<br>
+      <strong>🌐 HTML</strong> works great for MIT Shakespeare pages. In your browser go to File → Save Page As → <em>Webpage, HTML Only</em>, then import that file here.<br>
+      <strong>📋 PDF</strong> imports also work, but PDFs created by printing a webpage may not contain selectable text — if yours fails, see the tip in the error message.<br>
       <strong>⚡ Needs internet</strong> the first time for Word and PDF — after that it's cached.
     </div>
 
@@ -4270,7 +4493,7 @@ function downloadApp() {
     </div>
   </div>
 </div>
-<input type="file" id="import-file-input" style="display:none" accept=".json,.docx,.pdf" onchange="importFileSelected(event)">
+<input type="file" id="import-file-input" style="display:none" accept=".json,.docx,.pdf,.html,.htm" onchange="importFileSelected(event)">
 
 <!-- PRINT BROWSER WARNING TOAST -->
 <div id="print-browser-toast">
