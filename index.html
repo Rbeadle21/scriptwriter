@@ -866,12 +866,17 @@
   }
 
   @media print {
-    #tab-bar, #actor-panel { display: none !important; }
+    #tab-bar, #actor-panel, #az-print-bar { display: none !important; }
     .az-line.az-hidden { display: none !important; }
-    .az-line.my-line { background: #fffbe6 !important; border-left: 2px solid var(--gold) !important; }
+    .az-line.my-line { background: #fffbe6 !important; border-left: 2px solid #b8860b !important; }
     .az-line.cue-line { background: none !important; border-left: none !important; }
-    #actor-page { display: block !important; box-shadow: none; padding: 18mm 22mm; }
-    #actor-script-wrap { padding: 0; background: white; overflow: visible; }
+    html, body { overflow: visible !important; height: auto !important; background: white; }
+    #main { overflow: visible !important; height: auto !important; }
+    .tab-panel.active { overflow: visible !important; height: auto !important; }
+    #actor-zone { overflow: visible !important; }
+    #actor-script-wrap { padding: 0 !important; background: white !important; overflow: visible !important; height: auto !important; }
+    #actor-page { display: block !important; box-shadow: none !important; padding: 18mm 22mm !important; width: 100% !important; max-width: 100% !important; overflow: visible !important; height: auto !important; }
+    #az-lines { overflow: visible !important; height: auto !important; }
   }
 
 
@@ -1577,8 +1582,12 @@
 
   @media print {
     #sp-sidebar, #sp-print-bar { display: none !important; }
-    #sp-editor-wrap { padding: 0; background: white; overflow: visible; }
-    #sp-page { box-shadow: none; max-width: 100%; padding: 20mm 25mm; }
+    html, body { overflow: visible !important; height: auto !important; background: white; }
+    #main { overflow: visible !important; height: auto !important; }
+    .tab-panel.active { overflow: visible !important; height: auto !important; }
+    #sp-zone { overflow: visible !important; height: auto !important; }
+    #sp-editor-wrap { padding: 0; background: white; overflow: visible !important; height: auto !important; }
+    #sp-page { box-shadow: none; max-width: 100%; padding: 20mm 25mm; overflow: visible !important; height: auto !important; }
     .sp-delete-btn { display: none !important; }
     .sp-block.sp-type-note { display: none !important; }
   }
@@ -1639,10 +1648,11 @@
   @media print {
     #topbar, #sidebar, #statusbar, .block-del, .block-type-tag,
     #inline-toolbar, #toggle-cast-btn, #add-cast-page-btn { display: none !important; }
-    body { overflow: auto; background: white; }
-    #editor-wrap { padding: 0; background: white; overflow: visible; }
-    #main { overflow: visible; }
-    #page { box-shadow: none; max-width: 100%; padding: 18mm 22mm; }
+    html, body { overflow: visible !important; height: auto !important; background: white; }
+    #main { overflow: visible !important; height: auto !important; }
+    .tab-panel.active { overflow: visible !important; height: auto !important; }
+    #editor-wrap { padding: 0; background: white; overflow: visible !important; height: auto !important; }
+    #page { box-shadow: none; max-width: 100%; padding: 18mm 22mm; overflow: visible !important; height: auto !important; }
     .block-inner, #page-cast-table td { font-family: 'Courier New', monospace !important; }
     .block { background: none !important; }
   }
@@ -1976,7 +1986,6 @@
       </div>
         
       </div>
-    </div>
 
     <div id="actor-script-wrap">
       <div id="actor-landing">
@@ -1994,13 +2003,14 @@
       </div>
     </div>
 
-      <div id="az-print-bar">
-        <span class="print-hint">💡 In the print dialog, choose "Save as PDF" to get a PDF file instead of printing</span>
-        <button class="az-print-btn save" onclick="azExportJSON()">💾 Save Corrected Script</button>
-        <button class="az-print-btn secondary" onclick="azPrintMode('full')">🖨 Print Full Script</button>
-        <button class="az-print-btn primary" onclick="azPrintMode('current')">🖨 Print Current View</button>
-      </div>
+    <div id="az-print-bar">
+      <span class="print-hint">💡 In the print dialog, choose "Save as PDF" to get a PDF file instead of printing</span>
+      <button class="az-print-btn save" onclick="azExportJSON()">💾 Save Corrected Script</button>
+      <button class="az-print-btn secondary" onclick="azPrintMode('full')">🖨 Print Full Script</button>
+      <button class="az-print-btn primary" onclick="azPrintMode('current')">🖨 Print Current View</button>
+    </div>
 
+  </div><!-- /actor-zone -->
 </div><!-- /tab-actor -->
 <div class="tab-panel" id="tab-screenplay">
   <div id="sp-zone" style="display:flex;flex:1;align-self:stretch;overflow:hidden;min-height:0;">
@@ -2112,7 +2122,7 @@
       <p style="font-size:13px;color:#888;line-height:1.75;">
         Found a bug, got a suggestion, or just want to say hello? Get in touch:
       </p>
-      <a href="/cdn-cgi/l/email-protection#245747564d5450534b564f575051404d4b644c4b5049454d480a474b49" style="color:var(--accent);text-decoration:none;font-size:13px;">✉ <span class="__cf_email__" data-cfemail="473424352e37333028352c343332232e28072f28332a262e2b6924282a">[email&#160;protected]</span></a>
+      <a href="mailto:scriptworkstudio@hotmail.com" style="color:var(--accent);text-decoration:none;font-size:13px;">✉ scriptworkstudio@hotmail.com</a>
     </div>
 
     <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);text-align:left;">
@@ -2148,39 +2158,23 @@
 
     <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border);text-align:left;">
       <p style="font-size:14px;font-weight:600;color:var(--ink);margin-bottom:14px;">📥 Importing Scripts</p>
-
       <div style="margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">Importing Shakespeare plays</p>
-        <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:6px;">
-          <a href="https://shakespeare.mit.edu" target="_blank" rel="noopener" style="color:var(--accent);">shakespeare.mit.edu</a> 
-          has the complete works of Shakespeare, completely free. ScriptWriter can import any play directly:
-        </p>
+        <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:6px;"><a href="https://shakespeare.mit.edu" target="_blank" rel="noopener" style="color:var(--accent);">shakespeare.mit.edu</a> has the complete works of Shakespeare, completely free. ScriptWriter can import any play directly:</p>
         <ol style="font-size:13px;color:#666;line-height:2;margin:0;padding-left:20px;">
           <li>Open the play at <a href="https://shakespeare.mit.edu" target="_blank" rel="noopener" style="color:var(--accent);">shakespeare.mit.edu</a></li>
           <li>In your browser: <strong>File → Save Page As → Webpage, HTML Only</strong></li>
           <li>Click <strong>Import</strong> in ScriptWriter and select the saved file</li>
         </ol>
-        <p style="font-size:13px;color:#666;line-height:1.7;margin-top:6px;">
-          Acts, scenes, all characters, dialogue and stage directions are detected automatically.
-        </p>
+        <p style="font-size:13px;color:#666;line-height:1.7;margin-top:6px;">Acts, scenes, all characters, dialogue and stage directions are detected automatically.</p>
       </div>
-
       <div style="margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">Importing from other websites</p>
-        <p style="font-size:13px;color:#666;line-height:1.7;">
-          HTML import works on other script websites too — use the same Save Page As → Webpage, HTML Only method. 
-          Results vary depending on how the site is built. Cleanly structured pages import well; 
-          heavily styled modern sites may need some tidying in the editor afterwards.
-        </p>
+        <p style="font-size:13px;color:#666;line-height:1.7;">HTML import works on other script websites too — use the same Save Page As → Webpage, HTML Only method. Results vary depending on how the site is built.</p>
       </div>
-
       <div>
-        <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">My PDF won't import</p>
-        <p style="font-size:13px;color:#666;line-height:1.7;">
-          PDFs created by printing a webpage or scanning a document store text as an image, which ScriptWriter can't read. 
-          The free workaround is to use Google Drive: upload the PDF, right-click → <strong>Open with Google Docs</strong>, 
-          and Google will read the text automatically. Then <strong>File → Download → Microsoft Word (.docx)</strong> and import that instead.
-        </p>
+        <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;">My PDF won’t import</p>
+        <p style="font-size:13px;color:#666;line-height:1.7;">PDFs created by printing a webpage or scanning a document store text as an image, which ScriptWriter can’t read. Upload the PDF to Google Drive, right-click → <strong>Open with Google Docs</strong>, then <strong>File → Download → Microsoft Word (.docx)</strong> and import that instead.</p>
       </div>
     </div>
 
@@ -2255,7 +2249,7 @@
 <input type="file" id="file-input" style="display:none" accept=".json" onchange="loadFromFile(event)">
 <input type="file" id="az-file-input" style="display:none" accept=".json,.playwriter.json,.docx,.pdf,application/json" onchange="azLoadFile(event)">
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const state = {
   cast: [], castDescs: {}, pendingCastName: null,
   autoSaveTimer: null, castSectionVisible: false,
@@ -3126,6 +3120,30 @@ function azRender() {
 
 function azReveal(el) {
   el.classList.toggle('revealed');
+}
+
+function azPrintMode(mode) {
+  const prevMode = az.mode || 'full';
+  function doPrint() {
+    const panel = document.getElementById('actor-panel');
+    const placeholder = document.createComment('actor-panel-placeholder');
+    panel.parentNode.insertBefore(placeholder, panel);
+    panel.parentNode.removeChild(panel);
+    const wrap = document.getElementById('actor-script-wrap');
+    const prevStyle = wrap.getAttribute('style') || '';
+    wrap.style.cssText += ';width:100%!important;padding:0!important;';
+    window.print();
+    setTimeout(() => {
+      placeholder.parentNode.insertBefore(panel, placeholder);
+      placeholder.parentNode.removeChild(placeholder);
+      wrap.setAttribute('style', prevStyle);
+    }, 500);
+  }
+  if (mode === 'full' && prevMode !== 'full') {
+    az.mode = 'full'; azRender();
+    setTimeout(doPrint, 150);
+    setTimeout(() => { az.mode = prevMode; azRender(); }, 700);
+  } else { doPrint(); }
 }
 
 function azToggleSelfTest() {
@@ -4018,7 +4036,7 @@ function importConfirm() {
     });
 
   } else if (name.endsWith('.pdf')) {
-    showProg('Reading PDF\u2026');
+    showProg('Reading PDF…');
     loadLib('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'pdfjsLib', () => {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       const r = new FileReader();
@@ -4063,7 +4081,7 @@ function importConfirm() {
   }
 }
 
-// \u2500\u2500 HTML IMPORT PARSER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── HTML IMPORT PARSER ────────────────────────────────────────────
 
 function parseHtmlToBlocks(htmlString, fileName) {
   const parser = new DOMParser();
@@ -4080,28 +4098,18 @@ function parseMitShakespeareHtml(doc) {
   let title = (doc.title || '').replace(/:\s*(Entire Play|Full Play|Full Text).*/i, '').trim();
   const body = doc.body;
   if (!body) return { blocks, title, author: 'William Shakespeare' };
-
-  let currentChar = null;
-  let currentLines = [];
-
+  let currentChar = null, currentLines = [];
   function flushSpeech() {
-    if (currentChar && currentLines.length) {
-      blocks.push({ type: 'dialogue', charName: currentChar, content: currentLines.join(' ') });
-    }
-    currentChar = null;
-    currentLines = [];
+    if (currentChar && currentLines.length) blocks.push({ type: 'dialogue', charName: currentChar, content: currentLines.join(' ') });
+    currentChar = null; currentLines = [];
   }
-
   function extractLineAnchors(container) {
     for (const child of container.childNodes) {
       if (child.nodeType !== Node.ELEMENT_NODE) continue;
       const tag = child.tagName.toLowerCase();
       if (tag === 'a') {
         const n = child.getAttribute('name') || '';
-        if (/^\d+\.\d+\.\d+$/.test(n)) {
-          const text = child.textContent.trim();
-          if (text) currentLines.push(text);
-        }
+        if (/^\d+\.\d+\.\d+$/.test(n)) { const text = child.textContent.trim(); if (text) currentLines.push(text); }
       } else if (tag === 'p' || tag === 'i' || tag === 'em') {
         const italic = tag === 'p' ? child.querySelector('i, em') : child;
         if (italic) {
@@ -4109,55 +4117,25 @@ function parseMitShakespeareHtml(doc) {
           if (text) {
             const savedChar = currentChar;
             if (currentLines.length) blocks.push({ type: 'dialogue', charName: savedChar || '', content: currentLines.join(' ') });
-            currentLines = [];
-            blocks.push({ type: 'stage', charName: '', content: text });
-            currentChar = savedChar;
+            currentLines = []; blocks.push({ type: 'stage', charName: '', content: text }); currentChar = savedChar;
           }
         }
       }
     }
   }
-
   function walkNode(node) {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const tag = node.tagName.toLowerCase();
-    if (tag === 'h3') {
-      flushSpeech();
-      const text = node.textContent.trim();
-      blocks.push({ type: /^act\s/i.test(text) ? 'act' : 'scene', charName: '', content: text });
-      return;
-    }
-    if (tag === 'a') {
-      const n = node.getAttribute('name') || '';
-      if (/^speech\d+$/i.test(n)) {
-        flushSpeech();
-        const bold = node.querySelector('b, strong');
-        if (bold) currentChar = bold.textContent.trim();
-        return;
-      }
-    }
+    if (tag === 'h3') { flushSpeech(); const text = node.textContent.trim(); blocks.push({ type: /^act\s/i.test(text) ? 'act' : 'scene', charName: '', content: text }); return; }
+    if (tag === 'a') { const n = node.getAttribute('name') || ''; if (/^speech\d+$/i.test(n)) { flushSpeech(); const bold = node.querySelector('b, strong'); if (bold) currentChar = bold.textContent.trim(); return; } }
     if (tag === 'blockquote') {
       const hasLines = [...node.querySelectorAll('a[name]')].some(a => /^\d+\.\d+\.\d+$/.test(a.getAttribute('name') || ''));
-      if (hasLines) {
-        extractLineAnchors(node);
-      } else {
-        const italic = node.querySelector('i, em');
-        if (italic) { flushSpeech(); blocks.push({ type: 'stage', charName: '', content: italic.textContent.trim() }); }
-      }
+      if (hasLines) { extractLineAnchors(node); } else { const italic = node.querySelector('i, em'); if (italic) { flushSpeech(); blocks.push({ type: 'stage', charName: '', content: italic.textContent.trim() }); } }
       return;
     }
-    if (tag === 'p') {
-      const italic = node.querySelector('i, em');
-      if (italic && !node.querySelector('a[name]')) {
-        flushSpeech();
-        const text = italic.textContent.trim();
-        if (text) blocks.push({ type: 'stage', charName: '', content: text });
-        return;
-      }
-    }
+    if (tag === 'p') { const italic = node.querySelector('i, em'); if (italic && !node.querySelector('a[name]')) { flushSpeech(); const text = italic.textContent.trim(); if (text) blocks.push({ type: 'stage', charName: '', content: text }); return; } }
     for (const child of node.childNodes) walkNode(child);
   }
-
   for (const child of body.childNodes) walkNode(child);
   flushSpeech();
   return { blocks, title: title || 'Shakespeare Play', author: 'William Shakespeare' };
@@ -4166,56 +4144,35 @@ function parseMitShakespeareHtml(doc) {
 function parseGenericPlayHtml(doc, fileName) {
   const blocks = [];
   const title = (doc.querySelector('h1')?.textContent || doc.title || fileName).replace(/\.html?$/i, '').trim();
-
   function walk(node, ctx) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      node.textContent.split('\n').forEach(l => { const t = l.trim(); if (t) ctx.push({ text: t, italic: false, bold: false }); });
-      return;
-    }
+    if (node.nodeType === Node.TEXT_NODE) { node.textContent.split('\n').forEach(l => { const t = l.trim(); if (t) ctx.push({ text: t, italic: false, bold: false }); }); return; }
     if (node.nodeType !== Node.ELEMENT_NODE) return;
     const tag = node.tagName.toLowerCase();
-    if (['script', 'style', 'nav', 'header', 'footer'].includes(tag)) return;
-    const isI = tag === 'i' || tag === 'em', isB = tag === 'b' || tag === 'strong';
-    const isH = /^h[1-6]$/.test(tag);
-    const isBlock = ['p', 'div', 'br', 'li', 'blockquote', 'section', 'article'].includes(tag);
+    if (['script','style','nav','header','footer'].includes(tag)) return;
+    const isI = tag==='i'||tag==='em', isB = tag==='b'||tag==='strong', isH = /^h[1-6]$/.test(tag);
+    const isBlock = ['p','div','br','li','blockquote','section','article'].includes(tag);
     if (isH) { const t = node.textContent.trim(); if (t) ctx.push({ text: t, heading: true }); return; }
     if (tag === 'br') { ctx.push({ text: '', br: true }); return; }
-    const sub = [];
-    for (const c of node.childNodes) walk(c, sub);
-    sub.forEach(item => { if (isI) item.italic = true; if (isB) item.bold = true; ctx.push(item); });
+    const sub = []; for (const c of node.childNodes) walk(c, sub);
+    sub.forEach(item => { if (isI) item.italic=true; if (isB) item.bold=true; ctx.push(item); });
     if (isBlock) ctx.push({ text: '', br: true });
   }
-
-  const lines = [];
-  walk(doc.body || doc.documentElement, lines);
+  const lines = []; walk(doc.body || doc.documentElement, lines);
   const CHAR_RE = t => /^[A-Z][A-Z0-9\s\.\-']{1,28}$/.test(t) && t.length >= 2;
   let charBuf = null, speechBuf = [];
-
-  function flushSpeech() {
-    const t = speechBuf.join(' ').trim();
-    if (t) blocks.push({ type: 'dialogue', charName: charBuf || '', content: t });
-    speechBuf = []; charBuf = null;
-  }
-
+  function flushSpeech() { const t = speechBuf.join(' ').trim(); if (t) blocks.push({ type: 'dialogue', charName: charBuf||'', content: t }); speechBuf=[]; charBuf=null; }
   for (const ln of lines) {
-    const t = ln.text?.trim();
-    if (!t) continue;
-    if (ln.heading) {
-      flushSpeech();
-      if (/^act\s/i.test(t) || /^act [ivxlcdm]/i.test(t)) blocks.push({ type: 'act', charName: '', content: t });
-      else if (/^scene\s/i.test(t)) blocks.push({ type: 'scene', charName: '', content: t });
-      else blocks.push({ type: 'act', charName: '', content: t });
-      continue;
-    }
-    if (ln.italic && /^(enter|exit|exeunt|\[)/i.test(t)) { flushSpeech(); blocks.push({ type: 'stage', charName: '', content: t }); continue; }
-    if (CHAR_RE(t)) { flushSpeech(); charBuf = t; continue; }
+    const t = ln.text?.trim(); if (!t) continue;
+    if (ln.heading) { flushSpeech(); if (/^act\s/i.test(t)||/^act [ivxlcdm]/i.test(t)) blocks.push({type:'act',charName:'',content:t}); else if (/^scene\s/i.test(t)) blocks.push({type:'scene',charName:'',content:t}); else blocks.push({type:'act',charName:'',content:t}); continue; }
+    if (ln.italic && /^(enter|exit|exeunt|\[)/i.test(t)) { flushSpeech(); blocks.push({type:'stage',charName:'',content:t}); continue; }
+    if (CHAR_RE(t)) { flushSpeech(); charBuf=t; continue; }
     speechBuf.push(t);
   }
   flushSpeech();
   return { blocks, title, author: '' };
 }
 
-// \u2500\u2500 MISSING STUBS (theatre editor scene slug \u2014 not yet implemented) \u2500\u2500
+// ── MISSING STUBS (theatre editor scene slug — not yet implemented) ──
 function restoreLayoutPref() {
   const saved = localStorage.getItem('pw_layout') || 'modern';
   applyLayout(saved);
