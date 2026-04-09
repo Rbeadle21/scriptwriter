@@ -3944,7 +3944,8 @@ let importPendingFile = null;
 
 function openImportModal() {
   importPendingFile = null;
-  document.getElementById('import-file-input').value = '';
+  const fileInput = document.getElementById('import-file-input');
+  if (fileInput) fileInput.value = '';
   const result = document.getElementById('import-result');
   if (result) { result.style.display = 'none'; result.textContent = ''; }
   const progress = document.getElementById('import-progress');
