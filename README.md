@@ -2,8 +2,8 @@
 
 A free, browser-based editor for writing stage plays and theatre scripts. No account, no sign-up, no software to install — just open and start writing.
 
-🔗 **[Open ScriptWriter](https://rbeadle21.github.io)**  
-📥 **[Download for Offline Use](https://rbeadle21.github.io)** — click the *Download App* button on the site
+🔗 **[Open ScriptWriter](https://scriptworkstudio.github.io)**  
+📥 **[Download for Offline Use](https://scriptworkstudio.github.io)** — click the *Download App* button on the site
 
 ---
 
@@ -86,7 +86,7 @@ The best workflow for sharing with actors:
 ScriptWriter is designed to work completely offline once downloaded.
 
 **To get the offline version:**
-1. Visit [rbeadle21.github.io](https://rbeadle21.github.io)
+1. Visit [rbeadle21.github.io](https://scriptworkstudio.github.io)
 2. Click the **⬇ Download App** button in the top bar
 3. Save the file as `ScriptWriter.html`
 4. Open it in any browser — no internet needed
