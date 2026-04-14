@@ -86,7 +86,7 @@ The best workflow for sharing with actors:
 ScriptWriter is designed to work completely offline once downloaded.
 
 **To get the offline version:**
-1. Visit [rbeadle21.github.io](https://scriptworkstudio.github.io)
+1. Visit [scriptworkstudio.github.io](https://scriptworkstudio.github.io)
 2. Click the **⬇ Download App** button in the top bar
 3. Save the file as `ScriptWriter.html`
 4. Open it in any browser — no internet needed
